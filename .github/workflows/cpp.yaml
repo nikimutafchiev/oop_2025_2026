@@ -1,0 +1,33 @@
+name: C++ CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y build-essential
+
+    - name: Find and compile all C++ files
+      run: |
+        mkdir -p build
+        for file in $(find . -name "*.cpp"); do
+          echo "Compiling $file"
+          g++ -std=c++17 "$file" -o "build/$(basename "$file" .cpp)"
+        done
+
+    - name: Run all compiled executables
+      run: |
+        for exe in build/*; do
+          echo "Running $exe"
+          "$exe"
+        done

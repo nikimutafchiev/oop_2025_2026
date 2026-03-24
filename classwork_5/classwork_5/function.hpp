@@ -38,6 +38,12 @@ public:
 		maxSize = 10;
 		pairs = new FunctionPair<U,V>[maxSize];
 	}
+	//only allocates memory
+	Function(int maxSize) {
+		this->pairCount = 0;
+		this->maxSize = maxSize;
+		pairs = new FunctionPair<U, V>[maxSize];
+	}
 	Function(const Function& other):pairCount(other.pairCount), maxSize(other.maxSize){
 		pairs = new FunctionPair<U, V>[maxSize];
 		for (int i = 0; i < pairCount; i++) {
@@ -110,14 +116,9 @@ public:
 		return getValue(u);
 	}
 	Function operator+(const Function& other) {
-		Function res;
-		delete[] res.pairs;
+		Function res(this->maxSize + other.maxSize);
 
-		res.maxSize = this->maxSize + other.maxSize;
-		res.pairs = new FunctionPair<U, V>[res.maxSize];
-
-		int thisPairCount = this->pairCount;
-		for (int i = 0; i < thisPairCount; i++) {
+		for (int i = 0; i < pairCount; i++) {
 			U currU = pairs[i].getU();
 			Maybe<V> otherMatch = other.getValue(currU);
 			if (otherMatch) {
@@ -151,8 +152,7 @@ public:
 
 template <typename A, typename B, typename C>
 Function<A, C> operator*(const Function<A, B>& f1, const Function<B, C>& f2) {
-	Function<A, C> res;
-	res.maxSize = f1.maxSize;
+	Function<A, C> res(f1.pairCount);
 	for (int i = 0; i < f1.pairCount; i++) {
 		Maybe<C> match = f2.getValue(f1.pairs[i].getV());
 		if (match) {

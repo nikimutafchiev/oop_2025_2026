@@ -1,7 +1,8 @@
 #pragma once
 #include <iostream>
 #include "maybe.hpp"
-template <typename U, typename V>
+
+template <class U, class V>
 class FunctionPair {
 	U u;
 	V v;
